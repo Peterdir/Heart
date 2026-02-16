@@ -22,12 +22,20 @@ const HeartCanvas = () => {
             return a * a * a - x * x * y * y * y;
         }
 
-        function sampleHeart(scale) {
+        function sampleHeart(scale, edgeOnly) {
             while (1) {
                 const x = Math.random() * 3 - 1.5;
                 const y = Math.random() * 3 - 1.5;
 
                 let v = heartVal(x, y);
+
+                if (edgeOnly) {
+                    // Chỉ lấy hạt sát viền (trong + ngoài)
+                    if (Math.abs(v) < 0.015) {
+                        return { x: x * scale, y: -y * scale, v: v };
+                    }
+                    continue;
+                }
 
                 if (v <= 0) {
                     return {
@@ -47,8 +55,10 @@ const HeartCanvas = () => {
         // TẠO HẠT CHO TRÁI TIM
         const numberParticles = 8000;
         const particles = [];
+
+        // Hạt bên trong (8000)
         for (let i = 0; i < numberParticles; i++) {
-            const point = sampleHeart(150);
+            const point = sampleHeart(150, false);
 
             const angle = Math.random() * Math.PI * 2;
             const radius = Math.max(canvas.width, canvas.height);
@@ -56,25 +66,51 @@ const HeartCanvas = () => {
             const x = canvas.width / 2 + Math.cos(angle) * radius;
             const y = canvas.height / 2 + Math.sin(angle) * radius;
 
-            // const depth = Math.min(1, Math.abs(point.v) * 2);
             const depth = Math.min(1, Math.abs(point.v) * 1);
 
             particles.push({
-                x: x, // Điểm xuất phát ở ngoài màn hình
+                x: x,
                 y: y,
-                targetX: canvas.width / 2 + point.x, // Điểm đích đến
+                targetX: canvas.width / 2 + point.x,
                 targetY: canvas.height / 2 + point.y,
                 vx: 0,
                 vy: 0,
-                // THÊM 3 thuộc tính mới:
-                size: 0.4 + Math.random() * 0.7, // 0.4 → 1.1 (nhỏ hơn → mịn hơn)
-                alpha: 0.15 + Math.random() * 0.3, // 0.15 → 0.45
+                size: 0.4 + Math.random() * 0.7,
+                alpha: 0.15 + Math.random() * 0.3,
                 speed: 0.04 + Math.random() * 0.06,
                 driftAngle: Math.random() * Math.PI * 2,
-                driftSpeed: 0.3 + Math.random() * 0.5, // giảm drift → hạt giữ form hơn
-                driftFreq: 0.5 + Math.random() * 2, // tốc độ lắc: 0.5 → 2.5 (mỗi hạt khác nhau)
-                beatPhase: Math.random() * 0.04, // lệch pha 0 → 15% chu kỳ
+                driftSpeed: 0.3 + Math.random() * 0.5,
+                driftFreq: 0.5 + Math.random() * 2,
+                beatPhase: Math.random() * 0.04,
                 depth: depth,
+            });
+        }
+
+        // Hạt viền (2000) — sáng hơn, ít drift → viền sắc nét
+        for (let i = 0; i < 2000; i++) {
+            const point = sampleHeart(150, true);
+
+            const angle = Math.random() * Math.PI * 2;
+            const radius = Math.max(canvas.width, canvas.height);
+
+            const x = canvas.width / 2 + Math.cos(angle) * radius;
+            const y = canvas.height / 2 + Math.sin(angle) * radius;
+
+            particles.push({
+                x: x,
+                y: y,
+                targetX: canvas.width / 2 + point.x,
+                targetY: canvas.height / 2 + point.y,
+                vx: 0,
+                vy: 0,
+                size: 0.5 + Math.random() * 0.6,
+                alpha: 0.3 + Math.random() * 0.3,   // sáng hơn
+                speed: 0.04 + Math.random() * 0.06,
+                driftAngle: Math.random() * Math.PI * 2,
+                driftSpeed: 0.1 + Math.random() * 0.2,  // drift ít → viền rõ
+                driftFreq: 0.5 + Math.random() * 2,
+                beatPhase: Math.random() * 0.04,
+                depth: 0.1,
             });
         }
 
