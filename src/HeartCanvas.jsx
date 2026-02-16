@@ -62,7 +62,7 @@ const HeartCanvas = () => {
             const x = canvas.width / 2 + Math.cos(angle) * radius;
             const y = canvas.height / 2 + Math.sin(angle) * radius;
 
-            const depth = Math.min(1, Math.abs(point.v) * 1);
+            const depth = Math.min(1, Math.abs(point.v));
 
             particles.push({
                 x: x,
@@ -71,8 +71,8 @@ const HeartCanvas = () => {
                 targetY: canvas.height / 2 + point.y,
                 vx: 0,
                 vy: 0,
-                size: 0.4 + Math.random() * 0.6,
-                alpha: 0.15 + Math.random() * 0.23,
+                size: 0.5 + Math.random() * 0.8,
+                alpha: 0.1 + Math.random() * 0.35 + depth * 0.1,
                 speed: 0.04 + Math.random() * 0.06,
                 driftAngle: Math.random() * Math.PI * 2,
                 driftSpeed: 0.15 + Math.random() * 0.2,
