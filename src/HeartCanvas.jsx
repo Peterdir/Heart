@@ -31,7 +31,7 @@ const HeartCanvas = () => {
 
                 if (edgeOnly) {
                     // Chỉ lấy hạt sát viền (trong + ngoài)
-                    if (Math.abs(v) < 0.015) {
+                    if (Math.abs(v) < 0.008) {
                         return { x: x * scale, y: -y * scale, v: v };
                     }
                     continue;
@@ -45,18 +45,14 @@ const HeartCanvas = () => {
                     };
                 }
 
-                // HẠT AURA: sát viền, mỏng
-                if (v > 0 && v < 0.03 && Math.random() < 0.2) {
-                    return { x: x * scale, y: -y * scale, v: -0.0001 };
-                }
+
             }
         }
 
         // TẠO HẠT CHO TRÁI TIM
-        const numberParticles = 8000;
+        const numberParticles = 10000;
         const particles = [];
 
-        // Hạt bên trong (8000)
         for (let i = 0; i < numberParticles; i++) {
             const point = sampleHeart(150, false);
 
@@ -75,42 +71,14 @@ const HeartCanvas = () => {
                 targetY: canvas.height / 2 + point.y,
                 vx: 0,
                 vy: 0,
-                size: 0.4 + Math.random() * 0.7,
-                alpha: 0.15 + Math.random() * 0.3,
+                size: 0.4 + Math.random() * 0.6,
+                alpha: 0.15 + Math.random() * 0.23,
                 speed: 0.04 + Math.random() * 0.06,
                 driftAngle: Math.random() * Math.PI * 2,
-                driftSpeed: 0.3 + Math.random() * 0.5,
+                driftSpeed: 0.15 + Math.random() * 0.2,
                 driftFreq: 0.5 + Math.random() * 2,
                 beatPhase: Math.random() * 0.04,
                 depth: depth,
-            });
-        }
-
-        // Hạt viền (2000) — sáng hơn, ít drift → viền sắc nét
-        for (let i = 0; i < 2000; i++) {
-            const point = sampleHeart(150, true);
-
-            const angle = Math.random() * Math.PI * 2;
-            const radius = Math.max(canvas.width, canvas.height);
-
-            const x = canvas.width / 2 + Math.cos(angle) * radius;
-            const y = canvas.height / 2 + Math.sin(angle) * radius;
-
-            particles.push({
-                x: x,
-                y: y,
-                targetX: canvas.width / 2 + point.x,
-                targetY: canvas.height / 2 + point.y,
-                vx: 0,
-                vy: 0,
-                size: 0.5 + Math.random() * 0.6,
-                alpha: 0.3 + Math.random() * 0.3,   // sáng hơn
-                speed: 0.04 + Math.random() * 0.06,
-                driftAngle: Math.random() * Math.PI * 2,
-                driftSpeed: 0.1 + Math.random() * 0.2,  // drift ít → viền rõ
-                driftFreq: 0.5 + Math.random() * 2,
-                beatPhase: Math.random() * 0.04,
-                depth: 0.1,
             });
         }
 
